@@ -467,3 +467,112 @@ Let's extend the metadata structure to include:
    - Checks against schema, expected values, etc.
 
 This comprehensive approach to test data will save significant time in development and troubleshooting, especially as the number of supported systems grows. The ability to generate synthetic data further extends its utility for training, demonstrations, and external collaborations.
+
+# Date Normalization with Patient-Level t0 Field
+
+## Enhanced Pipeline Step: Date Normalization
+
+This step adds a standardized approach to handling relative timings in clinical studies by adding a `t0` object at the patient level.
+
+### Updated Pipeline Position
+```
+... → fully-snapped.numcodr.json → DATE NORMALIZATION → t0-normalized.numcodr.json → Secondary Processing → ...
+```
+
+### Implementation Details
+
+#### Patient-Level t0 Object
+The Date Normalization step would add a `t0` object to each patient:
+
+```json
+{
+  "patients": {
+    "example_12354": {
+      "t0": {
+        "selected_baseline": "consent_date",
+        "baseline_rationale": "Per study protocol",
+        "available_dates": {
+          "consent_date": "2022-03-15",
+          "screening_date": "2022-03-18",
+          "baseline_visit_date": "2022-03-25",
+          "first_treatment_date": "2022-04-02"
+        },
+        "day_adjustments": {
+          "consent_to_baseline": 10,
+          "protocol_adjustment": -1
+        }
+      },
+      "visits": {
+        // Visit data as before
+      }
+    }
+  }
+}
+```
+
+#### Study-Level Metadata
+The meta section would be enhanced with information about available start dates:
+
+```json
+"meta": {
+  // Other metadata as before
+  "date_normalization": {
+    "available_baseline_types": [
+      "consent_date",
+      "screening_date", 
+      "baseline_visit_date",
+      "first_treatment_date"
+    ],
+    "default_baseline": "consent_date",
+    "protocol_defined_timepoint": "consent_date"
+  }
+}
+```
+
+### Benefits of this Approach
+
+1. **Centralized Reference Point**: The `t0` object acts as a single source of truth for all relative time calculations
+
+2. **Multiple Baseline Options**: Preserves all potential baseline dates while clearly indicating which one was selected
+
+3. **Adjustment Flexibility**: The `day_adjustments` field allows for protocol-specific adjustments or corrections
+
+4. **Documentation**: Explicitly documents the rationale for baseline selection
+
+5. **Optional Application**: Relative dates can be calculated on demand during analysis rather than requiring date transformation throughout the dataset
+
+### Practical Implementation
+
+1. This step would extract all relevant dates from the patient data
+2. Apply configurable rules to determine the selected baseline
+3. Document available dates in the `t0` object
+4. Include any necessary day adjustments based on protocol specifications
+
+This approach maintains the integrity of original absolute dates while providing a standardized framework for relative time calculations that's critical for proper analysis of longitudinal clinical data.
+
+# Tracking eCRF Data Changes Over Time
+
+## Challenge: Capturing Data Evolution
+
+- Assessing documentation quality and completeness
+- Audit trail requirements
+- Understanding data entry patterns and timing
+- Quality control processes
+
+## Current Approaches
+
+1. **SQL Reports on SecuTrial Database**
+   - Direct database queries capture change history
+   - Reports stored in separate folder with each CDM export
+   - Provides comprehensive audit trail
+
+2. **Alternative: Daily Export Analysis**
+   - Extract change information from sequential exports (cdm-export-$date.zip)
+   - Enables change detection without direct database access
+   - Requires consistent daily export process
+
+### Collaboration with CDM Team
+
+This is an excellent opportunity for collaboration with the CDM team.
+
+We might want to integrate those exports into the numcodr codebase for reproducability and version these reports, so no downstream systems are affected when the report format changes.
