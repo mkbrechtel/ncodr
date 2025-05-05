@@ -219,6 +219,32 @@ productivity during the limited time available.
 
 # Results of the NUKLEUS Data Harmonization Hackathon
 
+## Role of epicodr: Primary Coding
+
+A key outcome of the hackathon was clarity regarding epicodr's primary role in the workflow: primary coding of study data. The ECU team explained that epicodr was specifically designed to handle the transformation of raw clinical data into standardized, analysis-ready formats. This process, known as "Primärkodierung" (primary coding), involves:
+
+1. **Data Standardization**
+   - Converting values to consistent units and formats
+   - Applying common coding schemes across different study sites
+   - Resolving inconsistencies in data collection
+
+2. **Derived Variable Creation**
+   - Calculating BMI from height and weight
+   - Generating risk scores from multiple input variables
+   - Transforming raw measurements into clinically meaningful categories
+
+3. **Data Quality Assessment**
+   - Identifying missing or implausible values
+   - Flagging potential data entry errors
+   - Generating quality reports for study sites
+
+4. **Statistical Preparation**
+   - Converting data into formats suitable for statistical analysis
+   - Creating analysis datasets with appropriate variable selection
+   - Applying necessary transformations for specific analytical methods
+
+The hackathon team agreed that these primary coding functions should be preserved and enhanced in the new numcodr framework, ensuring that the expertise embedded in epicodr's processing logic is not lost during the integration process.
+
 ## Integration of SecuTrial Metadata
 
 During the hackathon, the ECU team highlighted the importance of incorporating SecuTrial's metadata tables into the numcodr format. SecuTrial organizes its metadata across several key tables that can be leveraged for enhancing the numcodr workflow:
@@ -299,3 +325,145 @@ The integration of these metadata tables will require careful mapping of SecuTri
    - Input: processed.numcodr.json
    - Process: Convert to R/Python data frames for analysis
    - Output: Study-specific data frames
+
+# Updated numcodr Pipeline with Enhanced Snapping for Repeating Groups
+
+## Complete Pipeline Structure
+
+1. **Data Import**
+   - **Primary Data Import:** Source systems (SecuTrial, LIMS) → source-unmapped.numcodr.json
+   - **Metadata Import:** SecuTrial metadata tables (cl, vp, vps) → metadata.numcodr.json
+   - Output: source-unmapped.numcodr.json + metadata.numcodr.json
+
+2. **THS Mapping**
+   - Input: source-unmapped.numcodr.json
+   - Process: Pseudonymization via ths-tools
+   - Output: source.numcodr.json (with pseudonymized IDs)
+
+3. **Visit Mapping & Metadata Integration**
+   - Input: source.numcodr.json + metadata.numcodr.json
+   - Process:
+     - Apply visit plan structure from vp table
+     - Map forms to appropriate visits using vps mappings
+     - Apply code lists (cl) for categorical variables
+     - Validate data against expected structure
+   - Output: source-structured.numcodr.json (with proper visit structure)
+   - **Note:** At this stage, repeating groups without visit assignments are stored in a separate key under each patient object: `patient.repeating_items`
+
+4. **Unification**
+   - Input: Multiple source-structured.numcodr.json files from different sources
+   - Process: Merge data from multiple sources (CDM, LIMS, etc.)
+   - Output: unified.numcodr.json
+
+5. **Multi-Source Snapping**
+   - Input: unified.numcodr.json
+   - Process: A series of specialized snapping operations:
+   
+     a. **Repeating Groups Snapping**
+     - Target: data in `patient.repeating_items` (e.g., medication lists)
+     - Process: Uses timestamps to associate items with closest visits
+     - Maps items to appropriate visits or maintains as longitudinal data
+     
+     b. **Bioprobe Snapping**
+     - Target: laboratory samples without clear visit assignment
+     - Process: Maps samples to visits based on collection times
+     
+     c. **Image Data Snapping**
+     - Target: imaging studies from different systems
+     - Process: Maps imaging procedures to corresponding visits
+     
+     d. **Other Timestamp-based Data Snapping**
+     - Target: any other data with timestamps but no direct visit association
+     - Process: Apply appropriate temporal logic to assign to visits
+   
+   - Output: fully-snapped.numcodr.json
+
+6. **Secondary Processing**
+   - Input: fully-snapped.numcodr.json
+   - Process: Additional transformations based on study-specific needs
+   - Output: processed.numcodr.json
+
+7. **Data Frame Transformation**
+   - Input: processed.numcodr.json
+   - Process: Convert to R/Python data frames for analysis
+   - Output: Study-specific data frames
+
+# Example Data Strategy for numcodr
+
+You've raised excellent points about example data. Here's how we can integrate these recommendations into the numcodr project:
+
+## Example Data Sources
+
+- **secuTrialR Package**: Great resource for SecuTrial test data - we should leverage this in our development
+- **Similar Packages**: We should identify and catalog equivalent resources for REDCap and other systems
+
+## Implementation Strategy
+
+1. **Test Data Integration**
+   - Include standardized example datasets in the source code repository
+   - Create a dedicated `test_data` directory with subdirectories for each source system
+   - Structure test cases to validate each pipeline step independently
+
+2. **Data Integration Protocol for New Systems**
+   - Create a formal "Data Integration Requirements" document that specifies:
+     - Example dataset requirements
+     - Expected format and completeness
+     - Documentation needs
+   - Make this a mandatory part of onboarding new data sources
+
+3. **Study Setup Process Enhancement**
+   - Establish a protocol where eCRF verification data is automatically routed to the development team
+   - Create a standardized process to convert this data into test cases
+   - Document typical variations and edge cases in each study
+
+## Enhanced Metadata Fields
+
+Let's extend the metadata structure to include:
+
+```json
+"meta": {
+  "id": "01890e12-a35c-7c21-8762-32a63511e7e3",
+  "datetime": "2023-11-15T14:30:00Z",
+  "study_id": "nukleus-example-study",
+  "version": "1.0.0",
+  "data_classification": {
+    "contains_patient_data": true,
+    "publishable": false,
+    "synthetic_data": false,
+    "consent_status": {
+      "source": "THS",
+      "status": "all_consented",
+      "verification_date": "2023-11-14T10:00:00Z"
+    }
+  },
+  "transformations": [
+    // transformation entries as before
+  ]
+}
+```
+
+## Testing Framework Benefits
+
+1. **Continuous Integration**
+   - Automated tests can run on each commit/PR
+   - Ensures new changes don't break existing functionality
+
+2. **Documentation Through Examples**
+   - Example data serves as living documentation
+   - New developers can understand expected data structures
+
+3. **Edge Case Coverage**
+   - Collect unusual data scenarios in test cases
+   - Better prepare for real-world data challenges
+
+4. **Synthetic Data Generation**
+   - Use example structures to generate larger synthetic datasets
+   - Create varied test scenarios with controlled parameters
+   - Produce shareable datasets for teaching and collaboration
+   - Generate realistic test data without privacy concerns
+
+5. **Validation Pipeline**
+   - Create a separate pipeline that validates numcodr.json files
+   - Checks against schema, expected values, etc.
+
+This comprehensive approach to test data will save significant time in development and troubleshooting, especially as the number of supported systems grows. The ability to generate synthetic data further extends its utility for training, demonstrations, and external collaborations.
