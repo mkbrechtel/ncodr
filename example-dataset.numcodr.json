@@ -1,0 +1,346 @@
+{
+  "meta": {
+    "id": "01890e12-a35c-7c21-8762-32a63511e7e3",
+    "datetime": "2023-11-15T14:30:00Z",
+    "study_id": "nukleus-covid-study",
+    "version": "1.0.0",
+    "transformations": [
+      {
+        "name": "cdm_import",
+        "version": "0.3.2",
+        "datetime": "2023-11-15T13:45:22Z",
+        "parameters": {"source": "secutrial_export_20231114.zip"}
+      },
+      {
+        "name": "ths_mapping",
+        "version": "1.2.0",
+        "datetime": "2023-11-15T14:10:05Z",
+        "parameters": {"map_file": "cdm.ths-transferids-map.json"}
+      }
+    ],
+    "sources": [
+      {
+        "id": "secutrial_export_20231114.zip",
+        "type": "cdm",
+        "datetime": "2023-11-14T23:15:00Z",
+        "description": "Daily full export from SecuTrial CDM"
+      }
+    ]
+  },
+  "patients": {
+    "example_12354": {
+      "visits": {
+        "Baseline_1": {
+          "demographics": {
+            "age": 45,
+            "gender": "male",
+            "height": 178,
+            "weight": 82,
+            "bmi": 25.9,
+            "education_level": "university",
+            "smoking_status": "former",
+            "pack_years": 12
+          },
+          "vital_signs": {
+            "heart_rate": 72,
+            "blood_pressure_systolic": 128,
+            "blood_pressure_diastolic": 85,
+            "temperature": 36.7,
+            "oxygen_saturation": 98,
+            "respiratory_rate": 14
+          },
+          "samples": {
+            "blood_sample_id": "BS12345",
+            "collection_time": "2023-01-15T09:30:00",
+            "storage_temperature": -80,
+            "volume_collected": 10,
+            "processing_delay_minutes": 35,
+            "centrifuged": true,
+            "hemolysis": false
+          },
+          "covid_status": {
+            "pcr_result": "positive",
+            "test_date": "2023-01-14",
+            "ct_value": 24.3,
+            "symptoms_onset_date": "2023-01-12",
+            "symptoms": ["fever", "cough", "fatigue", "loss_of_taste"]
+          }
+        },
+        "Follow-Up_1": {
+          "vital_signs": {
+            "heart_rate": 68,
+            "blood_pressure_systolic": 130,
+            "blood_pressure_diastolic": 82,
+            "temperature": 36.5,
+            "oxygen_saturation": 96,
+            "respiratory_rate": 16
+          },
+          "laboratory": {
+            "hemoglobin": 14.0,
+            "leukocytes": 7.2,
+            "thrombocytes": 245,
+            "crp": 0.5,
+            "il_6": 12.4,
+            "d_dimer": 680,
+            "ferritin": 310,
+            "lymphocytes": 1.2
+          },
+          "clinical_assessment": {
+            "respiratory_support": "low_flow_oxygen",
+            "oxygen_flow_rate": 2,
+            "clinical_score": 4,
+            "pneumonia_confirmed": true,
+            "hospitalization_required": true
+          }
+        },
+        "Follow-Up_2": {
+          "vital_signs": {
+            "heart_rate": 70,
+            "blood_pressure_systolic": 132,
+            "blood_pressure_diastolic": 78,
+            "temperature": 36.6,
+            "oxygen_saturation": 98,
+            "respiratory_rate": 12
+          },
+          "laboratory": {
+            "hemoglobin": 14.2,
+            "leukocytes": 6.8,
+            "thrombocytes": 260,
+            "crp": 0.3,
+            "il_6": 3.1,
+            "d_dimer": 320,
+            "ferritin": 180,
+            "lymphocytes": 1.8
+          },
+          "covid_status": {
+            "pcr_result": "negative",
+            "test_date": "2023-02-01",
+            "ct_value": null,
+            "symptoms": ["mild_fatigue"]
+          },
+          "discharge_information": {
+            "discharge_date": "2023-02-02",
+            "discharge_status": "recovered",
+            "follow_up_scheduled": true,
+            "follow_up_date": "2023-03-01"
+          }
+        }
+      }
+    },
+    "example_12355": {
+      "visits": {
+        "Baseline_1": {
+          "demographics": {
+            "age": 67,
+            "gender": "female",
+            "height": 165,
+            "weight": 72,
+            "bmi": 26.4,
+            "education_level": "secondary",
+            "smoking_status": "never",
+            "pack_years": 0
+          },
+          "comorbidities": {
+            "diabetes": true,
+            "diabetes_type": "T2DM",
+            "hypertension": true,
+            "ckd": false,
+            "copd": false,
+            "coronary_heart_disease": true
+          },
+          "vital_signs": {
+            "heart_rate": 78,
+            "blood_pressure_systolic": 145,
+            "blood_pressure_diastolic": 88,
+            "temperature": 38.2,
+            "oxygen_saturation": 92,
+            "respiratory_rate": 20
+          },
+          "covid_status": {
+            "pcr_result": "positive",
+            "test_date": "2023-01-20",
+            "ct_value": 18.7,
+            "symptoms_onset_date": "2023-01-18",
+            "symptoms": ["fever", "severe_cough", "dyspnea", "myalgia"]
+          }
+        },
+        "Follow-Up_1": {
+          "vital_signs": {
+            "heart_rate": 85,
+            "blood_pressure_systolic": 150,
+            "blood_pressure_diastolic": 92,
+            "temperature": 37.8,
+            "oxygen_saturation": 88,
+            "respiratory_rate": 24
+          },
+          "laboratory": {
+            "hemoglobin": 12.8,
+            "leukocytes": 9.4,
+            "thrombocytes": 210,
+            "crp": 8.5,
+            "il_6": 45.2,
+            "d_dimer": 1250,
+            "ferritin": 650,
+            "lymphocytes": 0.8
+          },
+          "clinical_assessment": {
+            "respiratory_support": "high_flow_oxygen",
+            "oxygen_flow_rate": 15,
+            "clinical_score": 8,
+            "pneumonia_confirmed": true,
+            "hospitalization_required": true,
+            "icu_admission": true
+          }
+        },
+        "Follow-Up_2": {
+          "vital_signs": {
+            "heart_rate": 90,
+            "blood_pressure_systolic": 135,
+            "blood_pressure_diastolic": 85,
+            "temperature": 37.2,
+            "oxygen_saturation": 90,
+            "respiratory_rate": 22
+          },
+          "clinical_assessment": {
+            "respiratory_support": "mechanical_ventilation",
+            "clinical_score": 9,
+            "pneumonia_confirmed": true,
+            "icu_status": "ongoing"
+          }
+        }
+      }
+    },
+    "example_12356": {
+      "visits": {
+        "Baseline_1": {
+          "demographics": {
+            "age": 32,
+            "gender": "male",
+            "height": 180,
+            "weight": 75,
+            "bmi": 23.1,
+            "education_level": "university",
+            "smoking_status": "current",
+            "pack_years": 10
+          },
+          "comorbidities": {
+            "diabetes": false,
+            "hypertension": false,
+            "ckd": false,
+            "copd": false,
+            "asthma": true
+          },
+          "vital_signs": {
+            "heart_rate": 74,
+            "blood_pressure_systolic": 122,
+            "blood_pressure_diastolic": 78,
+            "temperature": 37.4,
+            "oxygen_saturation": 97,
+            "respiratory_rate": 16
+          },
+          "covid_status": {
+            "pcr_result": "positive",
+            "test_date": "2023-01-25",
+            "ct_value": 28.1,
+            "symptoms_onset_date": "2023-01-23",
+            "symptoms": ["mild_fever", "cough", "sore_throat"]
+          }
+        },
+        "Follow-Up_1": {
+          "vital_signs": {
+            "heart_rate": 72,
+            "blood_pressure_systolic": 120,
+            "blood_pressure_diastolic": 76,
+            "temperature": 36.8,
+            "oxygen_saturation": 98,
+            "respiratory_rate": 14
+          },
+          "covid_status": {
+            "pcr_result": "negative",
+            "test_date": "2023-02-05",
+            "symptoms": []
+          },
+          "clinical_assessment": {
+            "respiratory_support": "none",
+            "clinical_score": 1,
+            "hospitalization_required": false,
+            "recovery_status": "complete"
+          }
+        }
+      }
+    },
+    "example_12357": {
+      "visits": {
+        "Baseline_1": {
+          "demographics": {
+            "age": 81,
+            "gender": "female",
+            "height": 162,
+            "weight": 58,
+            "bmi": 22.1,
+            "education_level": "primary",
+            "smoking_status": "former",
+            "pack_years": 30
+          },
+          "comorbidities": {
+            "diabetes": true,
+            "diabetes_type": "T2DM",
+            "hypertension": true,
+            "ckd": true,
+            "copd": true,
+            "coronary_heart_disease": true,
+            "stroke_history": true
+          },
+          "vital_signs": {
+            "heart_rate": 88,
+            "blood_pressure_systolic": 156,
+            "blood_pressure_diastolic": 92,
+            "temperature": 38.5,
+            "oxygen_saturation": 85,
+            "respiratory_rate": 26
+          },
+          "covid_status": {
+            "pcr_result": "positive",
+            "test_date": "2023-02-10",
+            "ct_value": 15.2,
+            "symptoms_onset_date": "2023-02-08",
+            "symptoms": ["high_fever", "severe_dyspnea", "confusion", "cough"]
+          }
+        },
+        "Follow-Up_1": {
+          "vital_signs": {
+            "heart_rate": 98,
+            "blood_pressure_systolic": 110,
+            "blood_pressure_diastolic": 65,
+            "temperature": 39.0,
+            "oxygen_saturation": 78,
+            "respiratory_rate": 32
+          },
+          "laboratory": {
+            "hemoglobin": 11.5,
+            "leukocytes": 12.8,
+            "thrombocytes": 180,
+            "crp": 18.5,
+            "il_6": 120.5,
+            "d_dimer": 3500,
+            "ferritin": 1200,
+            "lymphocytes": 0.4
+          },
+          "clinical_assessment": {
+            "respiratory_support": "mechanical_ventilation",
+            "clinical_score": 10,
+            "pneumonia_confirmed": true,
+            "hospitalization_required": true,
+            "icu_admission": true
+          }
+        },
+        "Outcome": {
+          "date": "2023-02-18",
+          "status": "deceased",
+          "cause": "COVID-19 pneumonia with multiple organ failure",
+          "days_from_admission": 8
+        }
+      }
+    }
+  }
+}
