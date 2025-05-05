@@ -3,3 +3,4 @@ package-lock.json
 node_modules
 **/.claude/settings.local.json
 Rplots.pdf
+/epicodr
