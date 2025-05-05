@@ -1,6 +1,4 @@
-# NUKLEUS Data Harmonization Hackathon Results
-
-# Original plan for the Hackathon
+# Original plan for the NUKLEUS Data Harmonization Hackathon
 
 ## Overview
 This focused online hackathon brings together the Epidemiology Core
@@ -36,7 +34,7 @@ meta-field for transformation tracking
    - Discussion of pain points and integration challenges
 
 3. **New Data Format Proposal** (30 min)
-   - Presentation of the numcodr.json concept
+   - Presentation of the b concept
    - Meta-field for transformation tracking
    - Organization of patient and visit data
    - Feedback and refinement discussion
@@ -219,3 +217,85 @@ productivity during the limited time available.
 }
 ```
 
+# Results of the NUKLEUS Data Harmonization Hackathon
+
+## Integration of SecuTrial Metadata
+
+During the hackathon, the ECU team highlighted the importance of incorporating SecuTrial's metadata tables into the numcodr format. SecuTrial organizes its metadata across several key tables that can be leveraged for enhancing the numcodr workflow:
+
+1. **Code Lists (cl)**
+   - Contains all codes and labels for nominal/categorical variables
+   - Essential for proper interpretation of coded values in the dataset
+   - Enables consistent decoding of numeric codes to meaningful labels
+
+2. **Visit Plan (vp)**
+   - Describes the study's visit structure and timeline
+   - Contains visit IDs and definitions
+   - Provides the foundation for temporal organization of study data
+
+3. **Visit Plan to Form Mapping (vps)**
+   - Maps form IDs to specific visits in the visit plan
+   - Defines which forms should be collected during each visit
+   - Enables automated assignment of data to the correct visit context
+
+By incorporating these SecuTrial metadata tables into the numcodr format, we can achieve:
+
+1. **Enhanced Data Transformation**
+   - Ensuring proper data typing and validation using form definitions
+   - Maintaining coding schemes and value mappings from the code lists
+   - Preserving the original study design intentions
+
+2. **Automated Visit Assignment**
+   - Using vp and vps tables to map forms to appropriate visit types
+   - Ensuring consistent organization of data across the study timeline
+   - Validating the completeness of visit data based on the expected forms
+
+3. **Improved Data Quality**
+   - Validating collected data against expected variables and formats
+   - Identifying missing or out-of-range values
+   - Maintaining the integrity of the original study design
+
+The integration of these metadata tables will require careful mapping of SecuTrial's database structure to the numcodr format.
+
+# Updated numcodr Pipeline with SecuTrial Metadata Integration
+
+## Complete Pipeline Structure
+
+1. **Data Import**
+   - **Primary Data Import:** Source systems (SecuTrial, LIMS) → source-unmapped.numcodr.json
+   - **Metadata Import:** SecuTrial metadata tables (cl, vp, vps) → metadata.numcodr.json
+   - Output: source-unmapped.numcodr.json + metadata.numcodr.json
+
+2. **THS Mapping**
+   - Input: source-unmapped.numcodr.json
+   - Process: Pseudonymization via ths-tools
+   - Output: source.numcodr.json (with pseudonymized IDs)
+
+3. **Visit Mapping & Metadata Integration** (NEW STEP)
+   - Input: source.numcodr.json + metadata.numcodr.json
+   - Process:
+     - Apply visit plan structure from vp table
+     - Map forms to appropriate visits using vps mappings
+     - Apply code lists (cl) for categorical variables
+     - Validate data against expected structure
+   - Output: source-structured.numcodr.json (with proper visit structure)
+
+4. **Unification**
+   - Input: Multiple source-structured.numcodr.json files from different sources
+   - Process: Merge data from multiple sources (CDM, LIMS, etc.)
+   - Output: unified.numcodr.json
+
+5. **Snapping**
+   - Input: unified.numcodr.json
+   - Process: Map bioprobes/images to corresponding visits
+   - Output: snapped.numcodr.json
+
+6. **Secondary Processing**
+   - Input: snapped.numcodr.json
+   - Process: Additional transformations based on study-specific needs
+   - Output: processed.numcodr.json
+
+7. **Data Frame Transformation**
+   - Input: processed.numcodr.json
+   - Process: Convert to R/Python data frames for analysis
+   - Output: Study-specific data frames
