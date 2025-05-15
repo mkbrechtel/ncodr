@@ -5,7 +5,7 @@ This focused online hackathon brings together the Epidemiology Core
 Unit (ECU) and the Interaction Core Unit (ICU) to develop a unified
 approach to data transformation within the NUKLEUS project. The goal
 is to merge ECU's epicodr R package with ICU's Python-based data
-preparation into a new framework called "numcodr".
+preparation into a new framework called "ncodr".
 
 ## Background
 Currently, ECU and ICU maintain separate data processing pipelines:
@@ -14,11 +14,11 @@ Currently, ECU and ICU maintain separate data processing pipelines:
 
 This divergence creates redundancies and potential inconsistencies.
 The proposed solution is a standardized JSON-based format
-(.numcodr.json) that supports both teams' needs.
+(.ncodr.json) that supports both teams' needs.
 
 ## Goals
 1. Establish a common understanding of current workflows
-2. Define and validate the new .numcodr.json format with enhanced
+2. Define and validate the new .ncodr.json format with enhanced
 meta-field for transformation tracking
 3. Outline R package requirements for processing this format
 4. Create a practical implementation plan
@@ -58,8 +58,8 @@ meta-field for transformation tracking
    - Communication plan
 
 ## Expected Outcomes
-1. Working specifications for the numcodr format
-2. Initial R functions for parsing .numcodr.json files
+1. Working specifications for the ncodr format
+2. Initial R functions for parsing .ncodr.json files
 3. Conversion examples for existing datasets
 4. Development roadmap with assigned responsibilities
 5. Timeline for alpha release
@@ -73,17 +73,17 @@ productivity during the limited time available.
 # Appendix: Proposed Data Architecture
 
 ## Data Flow
-1. **Import:** Source systems → source-unmapped.numcodr.json
-2. **THS Mapping:** Pseudonymization → source.numcodr.json
-3. **Unification:** Multiple sources → unified.numcodr.json
-4. **Snapping:** Bioprobes/images to visit mapping → snapped.numcodr.json
+1. **Import:** Source systems → source-unmapped.ncodr.json
+2. **THS Mapping:** Pseudonymization → source.ncodr.json
+3. **Unification:** Multiple sources → unified.ncodr.json
+4. **Snapping:** Bioprobes/images to visit mapping → snapped.ncodr.json
 5. **Analysis:** JSON → Data frames (R and Pandas)
 
 ## File Organization
-- Standard path structure: data/$study_id/$date/*.numcodr.json
+- Standard path structure: data/$study_id/$date/*.ncodr.json
 - CLI interface: `--data-folder data/ --study-id nukleus-example-study`
 
-## Example .numcodr.json Format
+## Example .ncodr.json Format
 
 ```json
 {
@@ -243,11 +243,11 @@ A key outcome of the hackathon was clarity regarding epicodr's primary role in t
    - Creating analysis datasets with appropriate variable selection
    - Applying necessary transformations for specific analytical methods
 
-The hackathon team agreed that these primary coding functions should be preserved and enhanced in the new numcodr framework, ensuring that the expertise embedded in epicodr's processing logic is not lost during the integration process.
+The hackathon team agreed that these primary coding functions should be preserved and enhanced in the new ncodr framework, ensuring that the expertise embedded in epicodr's processing logic is not lost during the integration process.
 
 ## Integration of SecuTrial Metadata
 
-During the hackathon, the ECU team highlighted the importance of incorporating SecuTrial's metadata tables into the numcodr format. SecuTrial organizes its metadata across several key tables that can be leveraged for enhancing the numcodr workflow:
+During the hackathon, the ECU team highlighted the importance of incorporating SecuTrial's metadata tables into the ncodr format. SecuTrial organizes its metadata across several key tables that can be leveraged for enhancing the ncodr workflow:
 
 1. **Code Lists (cl)**
    - Contains all codes and labels for nominal/categorical variables
@@ -264,7 +264,7 @@ During the hackathon, the ECU team highlighted the importance of incorporating S
    - Defines which forms should be collected during each visit
    - Enables automated assignment of data to the correct visit context
 
-By incorporating these SecuTrial metadata tables into the numcodr format, we can achieve:
+By incorporating these SecuTrial metadata tables into the ncodr format, we can achieve:
 
 1. **Enhanced Data Transformation**
    - Ensuring proper data typing and validation using form definitions
@@ -281,82 +281,82 @@ By incorporating these SecuTrial metadata tables into the numcodr format, we can
    - Identifying missing or out-of-range values
    - Maintaining the integrity of the original study design
 
-The integration of these metadata tables will require careful mapping of SecuTrial's database structure to the numcodr format.
+The integration of these metadata tables will require careful mapping of SecuTrial's database structure to the ncodr format.
 
-# Updated numcodr Pipeline with SecuTrial Metadata Integration
+# Updated ncodr Pipeline with SecuTrial Metadata Integration
 
 ## Complete Pipeline Structure
 
 1. **Data Import**
-   - **Primary Data Import:** Source systems (SecuTrial, LIMS) → source-unmapped.numcodr.json
-   - **Metadata Import:** SecuTrial metadata tables (cl, vp, vps) → metadata.numcodr.json
-   - Output: source-unmapped.numcodr.json + metadata.numcodr.json
+   - **Primary Data Import:** Source systems (SecuTrial, LIMS) → source-unmapped.ncodr.json
+   - **Metadata Import:** SecuTrial metadata tables (cl, vp, vps) → metadata.ncodr.json
+   - Output: source-unmapped.ncodr.json + metadata.ncodr.json
 
 2. **THS Mapping**
-   - Input: source-unmapped.numcodr.json
+   - Input: source-unmapped.ncodr.json
    - Process: Pseudonymization via ths-tools
-   - Output: source.numcodr.json (with pseudonymized IDs)
+   - Output: source.ncodr.json (with pseudonymized IDs)
 
 3. **Visit Mapping & Metadata Integration** (NEW STEP)
-   - Input: source.numcodr.json + metadata.numcodr.json
+   - Input: source.ncodr.json + metadata.ncodr.json
    - Process:
      - Apply visit plan structure from vp table
      - Map forms to appropriate visits using vps mappings
      - Apply code lists (cl) for categorical variables
      - Validate data against expected structure
-   - Output: source-structured.numcodr.json (with proper visit structure)
+   - Output: source-structured.ncodr.json (with proper visit structure)
 
 4. **Unification**
-   - Input: Multiple source-structured.numcodr.json files from different sources
+   - Input: Multiple source-structured.ncodr.json files from different sources
    - Process: Merge data from multiple sources (CDM, LIMS, etc.)
-   - Output: unified.numcodr.json
+   - Output: unified.ncodr.json
 
 5. **Snapping**
-   - Input: unified.numcodr.json
+   - Input: unified.ncodr.json
    - Process: Map bioprobes/images to corresponding visits
-   - Output: snapped.numcodr.json
+   - Output: snapped.ncodr.json
 
 6. **Secondary Processing**
-   - Input: snapped.numcodr.json
+   - Input: snapped.ncodr.json
    - Process: Additional transformations based on study-specific needs
-   - Output: processed.numcodr.json
+   - Output: processed.ncodr.json
 
 7. **Data Frame Transformation**
-   - Input: processed.numcodr.json
+   - Input: processed.ncodr.json
    - Process: Convert to R/Python data frames for analysis
    - Output: Study-specific data frames
 
-# Updated numcodr Pipeline with Enhanced Snapping for Repeating Groups
+# Updated ncodr Pipeline with Enhanced Snapping for Repeating Groups
 
 ## Complete Pipeline Structure
 
 1. **Data Import**
-   - **Primary Data Import:** Source systems (SecuTrial, LIMS) → source-unmapped.numcodr.json
-   - **Metadata Import:** SecuTrial metadata tables (cl, vp, vps) → metadata.numcodr.json
-   - Output: source-unmapped.numcodr.json + metadata.numcodr.json
+   - **Primary Data Import:** Source systems (SecuTrial, LIMS) → source-unmapped.ncodr.json
+   - **Metadata Import:** SecuTrial metadata tables (cl, vp, vps) → metadata.ncodr.json
+   - Output: source-unmapped.ncodr.json + metadata.ncodr.json
 
 2. **THS Mapping**
-   - Input: source-unmapped.numcodr.json
+   - Input: source-unmapped.ncodr.json
    - Process: Pseudonymization via ths-tools
-   - Output: source.numcodr.json (with pseudonymized IDs)
+   - Output: source.ncodr.json (with pseudonymized IDs)
 
 3. **Visit Mapping & Metadata Integration**
-   - Input: source.numcodr.json + metadata.numcodr.json
+   - Input: source.ncodr.json + metadata.ncodr.json
    - Process:
      - Apply visit plan structure from vp table
      - Map forms to appropriate visits using vps mappings
      - Apply code lists (cl) for categorical variables
      - Validate data against expected structure
-   - Output: source-structured.numcodr.json (with proper visit structure)
+   - Output: source-structured.ncodr.json (with proper visit structure)
    - **Note:** At this stage, repeating groups without visit assignments are stored in a separate key under each patient object: `patient.repeating_items`
 
 4. **Unification**
-   - Input: Multiple source-structured.numcodr.json files from different sources
+   - Input: Multiple source-structured.ncodr.json files from different sources
    - Process: Merge data from multiple sources (CDM, LIMS, etc.)
-   - Output: unified.numcodr.json
+   - Output: unified.ncodr.json
 
 5. **Multi-Source Snapping**
-   - Input: unified.numcodr.json
+   - Input: unified.ncodr.json
    - Process: A series of specialized snapping operations:
    
      a. **Repeating Groups Snapping**
@@ -376,21 +376,21 @@ The integration of these metadata tables will require careful mapping of SecuTri
      - Target: any other data with timestamps but no direct visit association
      - Process: Apply appropriate temporal logic to assign to visits
    
-   - Output: fully-snapped.numcodr.json
+   - Output: fully-snapped.ncodr.json
 
 6. **Secondary Processing**
-   - Input: fully-snapped.numcodr.json
+   - Input: fully-snapped.ncodr.json
    - Process: Additional transformations based on study-specific needs
-   - Output: processed.numcodr.json
+   - Output: processed.ncodr.json
 
 7. **Data Frame Transformation**
-   - Input: processed.numcodr.json
+   - Input: processed.ncodr.json
    - Process: Convert to R/Python data frames for analysis
    - Output: Study-specific data frames
 
-# Example Data Strategy for numcodr
+# Example Data Strategy for ncodr
 
-You've raised excellent points about example data. Here's how we can integrate these recommendations into the numcodr project:
+You've raised excellent points about example data. Here's how we can integrate these recommendations into the ncodr project:
 
 ## Example Data Sources
 
@@ -463,7 +463,7 @@ Let's extend the metadata structure to include:
    - Generate realistic test data without privacy concerns
 
 5. **Validation Pipeline**
-   - Create a separate pipeline that validates numcodr.json files
+   - Create a separate pipeline that validates ncodr.json files
    - Checks against schema, expected values, etc.
 
 This comprehensive approach to test data will save significant time in development and troubleshooting, especially as the number of supported systems grows. The ability to generate synthetic data further extends its utility for training, demonstrations, and external collaborations.
@@ -476,7 +476,7 @@ This step adds a standardized approach to handling relative timings in clinical 
 
 ### Updated Pipeline Position
 ```
-... → fully-snapped.numcodr.json → DATE NORMALIZATION → t0-normalized.numcodr.json → Secondary Processing → ...
+... → fully-snapped.ncodr.json → DATE NORMALIZATION → t0-normalized.ncodr.json → Secondary Processing → ...
 ```
 
 ### Implementation Details
@@ -575,7 +575,7 @@ This approach maintains the integrity of original absolute dates while providing
 
 This is an excellent opportunity for collaboration with the CDM team.
 
-We might want to integrate those exports into the numcodr codebase for reproducability and version these reports, so no downstream systems are affected when the report format changes.
+We might want to integrate those exports into the ncodr codebase for reproducability and version these reports, so no downstream systems are affected when the report format changes.
 
 # Hackathon Summary
 

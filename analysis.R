@@ -1,22 +1,22 @@
-# numcodr - Example R script to analyze numcodr format data
-# This script reads a numcodr JSON file and performs basic gender analysis
+# ncodr - Example R script to analyze ncodr format data
+# This script reads a ncodr JSON file and performs basic gender analysis
 
 library(jsonlite)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 
-# Source the numcodr loader
-source("numcodr-loader.R")
+# Source the ncodr loader
+source("ncodr-loader.R")
 
-# Load the data using the numcodr loader
-data_path <- "example-dataset.numcodr.json"
-numcodr_data <- numcodr_to_dataframes(data_path)
+# Load the data using the ncodr loader
+data_path <- "example-dataset.ncodr.json"
+ncodr_data <- ncodr_to_dataframes(data_path)
 
 # Extract the data frames with safety checks
-demographics <- if(!is.null(numcodr_data$demographics)) numcodr_data$demographics else data.frame()
-vitals <- if(!is.null(numcodr_data$vital_signs)) numcodr_data$vital_signs else data.frame()
-laboratory <- if(!is.null(numcodr_data$laboratory)) numcodr_data$laboratory else data.frame()
+demographics <- if(!is.null(ncodr_data$demographics)) ncodr_data$demographics else data.frame()
+vitals <- if(!is.null(ncodr_data$vital_signs)) ncodr_data$vital_signs else data.frame()
+laboratory <- if(!is.null(ncodr_data$laboratory)) ncodr_data$laboratory else data.frame()
 
 # Check if we have data before proceeding
 if(nrow(demographics) > 0) {
@@ -83,7 +83,7 @@ if(nrow(demographics) > 0) {
   cat("\nDataset Summary:\n")
   cat("Number of patients:", length(unique(demographics$patient_id)), "\n")
   cat("Number of visits:", if(nrow(vitals) > 0) nrow(vitals) else "Unknown", "\n")
-  cat("Available data frames:", paste(names(numcodr_data), collapse = ", "), "\n")
+  cat("Available data frames:", paste(names(ncodr_data), collapse = ", "), "\n")
 } else {
   cat("No demographic data available. Cannot proceed with analysis.\n")
 }

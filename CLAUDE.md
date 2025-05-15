@@ -1,12 +1,12 @@
-# NUMCODR Project Summary
+# NCODR Project Summary
 
 ## Overview
-NUMCODR is a data harmonization framework for clinical research data in the NUKLEUS project. It converts hierarchical JSON data into flat R dataframes for analysis.
+NCODR is a data harmonization framework for clinical research data in the NUKLEUS project. It converts hierarchical JSON data into flat R dataframes for analysis.
 
 ## Key Data Structure
 
 ```
-numcodr.json
+ncodr.json
 |
 ├── meta                           # Metadata about the dataset
 |   ├── id                         # Unique dataset identifier
@@ -40,15 +40,15 @@ numcodr.json
 
 ## Key Components
 
-1. **numcodr-loader.R**: Transforms nested JSON into flat dataframes
-   - `numcodr_to_dataframes()`: Main function to convert JSON to dataframes
+1. **ncodr-loader.R**: Transforms nested JSON into flat dataframes
+   - `ncodr_to_dataframes()`: Main function to convert JSON to dataframes
    - `flatten_nested_data()`: Helper to handle nested structures
 
 2. **Data Transformation Flow**:
-   - Source systems → source-unmapped.numcodr.json
-   - Pseudonymization → source.numcodr.json
-   - Multiple sources → unified.numcodr.json
-   - Bioprobes/images to visit mapping → snapped.numcodr.json
+   - Source systems → source-unmapped.ncodr.json
+   - Pseudonymization → source.ncodr.json
+   - Multiple sources → unified.ncodr.json
+   - Bioprobes/images to visit mapping → snapped.ncodr.json
    - JSON → Data frames (R and Pandas)
 
 3. **Example Scripts**:

@@ -1,8 +1,8 @@
 # Source the loader script
-source("numcodr-loader.R")
+source("ncodr-loader.R")
 
 # Load all data frames from the JSON file
-data_frames <- numcodr_to_dataframes("example-dataset.numcodr.json")
+data_frames <- ncodr_to_dataframes("example-dataset.ncodr.json")
 
 # Display all data frame names
 cat("Created data frames:\n")
